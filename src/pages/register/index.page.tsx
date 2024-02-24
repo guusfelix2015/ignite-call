@@ -4,9 +4,11 @@ import { ArrowArcRight } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
 
 const registerFormSchema = z.object({
-  userName: z
+  username: z
     .string({})
     .min(3, { message: 'O nome de usuário deve ter no mínimo 3 caracteres' })
     .regex(/^([a-z\\-]+)$/i, {
@@ -24,10 +26,20 @@ export default function Register() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerFormSchema),
   })
+
+  const query = useSearchParams()
+
+  useEffect(() => {
+    const username = query.get('username')
+    if (username) {
+      setValue('username', username)
+    }
+  }, [query, setValue])
 
   async function handleFormRegister(data: RegisterFormData) {
     console.log(data)
@@ -47,13 +59,13 @@ export default function Register() {
         <label>
           <Text size="sm">Nome de usuário</Text>
           <TextInput
-            {...register('userName')}
+            {...register('username')}
             prefix="ignite.com/"
             placeholder="seu-usuario"
             crossOrigin=""
           />
           {errors.name && (
-            <FormError>{errors.userName && errors.userName.message}</FormError>
+            <FormError>{errors.username && errors.username.message}</FormError>
           )}
         </label>
         <label>
