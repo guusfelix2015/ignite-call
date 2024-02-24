@@ -1,6 +1,6 @@
 import { Button, Heading, MultiStep, Text, TextInput } from '@ignite-ui/react'
 import { Container, Form, FormError, Header } from './styles'
-import { ArrowArcRight } from 'phosphor-react'
+import { ArrowRight } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,6 +8,7 @@ import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { api } from '@/lib/axios'
 import { AxiosError } from 'axios'
+import { useRouter } from 'next/router'
 
 const registerFormSchema = z.object({
   username: z
@@ -35,6 +36,7 @@ export default function Register() {
   })
 
   const query = useSearchParams()
+  const router = useRouter()
 
   useEffect(() => {
     const username = query.get('username')
@@ -49,6 +51,8 @@ export default function Register() {
         name: data.username,
         username: data.username,
       })
+
+      await router.push('/register/connect-calendar')
     } catch (err) {
       if (err instanceof AxiosError && err.response?.data?.message) {
         alert(err.response.data.message)
@@ -92,7 +96,7 @@ export default function Register() {
         </label>
         <Button disabled={isSubmitting} type="submit">
           Próximo passo
-          <ArrowArcRight />
+          <ArrowRight />
         </Button>
       </Form>
     </Container>
